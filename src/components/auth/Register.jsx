@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import './Auth.css';
 import FormInput from '../reusable/FormInput';
 import RadioInput from '../reusable/RadioInput';
 import Button from '../reusable/Button';
 import { Link } from 'react-router-dom';
 import { validateInputs } from '../../helpers/Helpers';
+import { createUser } from '../../redux/action/auth';
 
-const Register = () => {
+const Register = props => {
+  const { createUser, isAuthenticated, history } = props;
   const [user, setUser] = useState({
     username: '',
     password: '',
@@ -19,6 +22,12 @@ const Register = () => {
     roleError: ''
   })
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push('/dashboard')
+    }
+  }, [isAuthenticated, history]);
+
   const { username, password } = user;
   const { usernameError, passwordError, roleError } = error;
 
@@ -27,7 +36,7 @@ const Register = () => {
     const isValid = validateInputs(user, setError);
     console.log(isValid)
     if (isValid) {
-      console.log(user)
+      createUser(user)
     }
   }
 
@@ -104,5 +113,13 @@ const Register = () => {
   )
 }
 
-export default Register
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+const actions = ({ 
+  createUser
+})
+
+export default connect(mapStateToProps, actions)(Register);
 
