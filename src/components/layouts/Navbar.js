@@ -2,12 +2,14 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {logout} from '../../redux/action/auth';
 
 const Navbar = props => {
-  const { isAuthenticated } = props;
+  const { isAuthenticated, logout } = props;
   const history = useHistory();
 
   const logoutUser = () => {
+    logout();
     history.push('/');
   }
 
@@ -37,11 +39,12 @@ const Navbar = props => {
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated,
+  isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps)(Navbar);
+export default connect(mapStateToProps, {logout})(Navbar);
 
 Navbar.propTypes = {
-  isAuthenticated: PropTypes.bool
+  isAuthenticated: PropTypes.bool,
+  logout: PropTypes.func.isRequired
 }

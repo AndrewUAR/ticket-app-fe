@@ -1,19 +1,20 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import socketIOClient from 'socket.io-client';
 import FormInput from '../../../reusable/FormInput';
 import Button from '../../../reusable/Button';
 import DropDown from '../../../reusable/dropDown.js/DropDown';
 import { departmentsArray, prioritiesArray } from '../../../../helpers/Helpers';
-import { addNewTicket } from '../../../../services/ticket.service';
-import { addModal } from '../../../../redux/action/modal';
+import { editTicket } from '../../../../services/ticket.service';
+import { editModal } from '../../../../redux/action/modal';
 
 const API_ENDPOINT = 'http://localhost:5000';
 
-const AddTicketForm = props => {
+const EditTicketForm = props => {
   const socket = socketIOClient(API_ENDPOINT);
 
-  const { addModal} = props;
+  const { editModal, selectedTicket } = props;
   let departments = departmentsArray();
   let priorities = prioritiesArray();
 
@@ -29,6 +30,21 @@ const AddTicketForm = props => {
   });
 
   const { fullName, email, subject, description } = ticket;
+
+  useEffect(() => {
+    if (selectedTicket) {
+      setTicket({
+        fullName: selectedTicket.fullName,
+        email: selectedTicket.email,
+        subject: selectedTicket.subject,
+        description: selectedTicket.description,
+        department: selectedTicket.department,
+        priority: selectedTicket.priority
+      });
+      setDepartment(selectedTicket.department);
+      setPriority(selectedTicket.priority)
+    }
+  }, [selectedTicket])
 
   const getDropDownValue = item => {
     if (item.key === 'departments') {
@@ -46,31 +62,18 @@ const AddTicketForm = props => {
     }))
   }
 
-  const onAddTicket =  async e => {
+  const onEditTicket =  async e => {
     e.preventDefault();
     ticket.priority = priority;
     ticket.department = department;
-    await addNewTicket(ticket);
+    await editTicket(selectedTicket._id, ticket);
     socket.emit('refresh', {});
-    resetForm();
   }
 
-  const resetForm = () => {
-    setTicket({
-      fullName: '',
-      email: '',
-      subject: '',
-      description: '',
-      department: '',
-      priority: ''
-    });
-    setDepartment('Select Department');
-    setPriority('Select Priority')
-  }
 
   return (
     <>
-      <form onSubmit={onAddTicket}>
+      <form onSubmit={onEditTicket}>
         <div className="form-group">
           <FormInput 
             type="text"
@@ -136,22 +139,28 @@ const AddTicketForm = props => {
         </div>
         <Button 
           className="btn btn-primary"
-          label="Add"
+          label="Edit"
           disabled={
             !fullName || !email || !subject || !description || !department || !priority
           }
         />
         &nbsp;&nbsp;&nbsp;
         <Button 
-          type="button"
           className="btn btn-danger"
           label="Cancel"
-          handleClick={() => addModal(false)}
+          handleClick={() => editModal(false)}
         />
       </form>
     </>
   )
 }
 
+EditTicketForm.propTypes = {
+  selectedTicket: PropTypes.object
+}
 
-export default connect(null, { addModal })(AddTicketForm);
+const mapStateToProps = state => ({
+  selectedTicket: state.tickets.selectedTicket
+})
+
+export default connect(mapStateToProps, { editModal })(EditTicketForm);

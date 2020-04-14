@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import './Auth.css';
 import FormInput from '../reusable/FormInput';
 import RadioInput from '../reusable/RadioInput';
@@ -9,7 +10,7 @@ import { validateInputs } from '../../helpers/Helpers';
 import { createUser } from '../../redux/action/auth';
 
 const Register = props => {
-  const { createUser, isAuthenticated, history } = props;
+  const { createUser, isAuthenticated, history, errors } = props;
   const [user, setUser] = useState({
     username: '',
     password: '',
@@ -34,7 +35,6 @@ const Register = props => {
   const onRegisterUser = e => {
     e.preventDefault();
     const isValid = validateInputs(user, setError);
-    console.log(isValid)
     if (isValid) {
       createUser(user)
     }
@@ -108,13 +108,19 @@ const Register = props => {
             Already registered? <Link to={"/sign-in"}>Login</Link>
           </p>
         </form>
+        {
+          errors ?
+          <p className="error-feedback">{errors}</p>
+          : ''
+        }
       </div>
     </div>
   )
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  errors: state.errors
 });
 
 const actions = ({ 
@@ -123,3 +129,8 @@ const actions = ({
 
 export default connect(mapStateToProps, actions)(Register);
 
+Register.propTypes = {
+  createUser: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
+  errors: PropTypes.string
+}

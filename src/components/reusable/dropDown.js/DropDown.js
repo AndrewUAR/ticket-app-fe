@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import './DropDown.css';
 
 const DropDown = props => {
@@ -42,8 +41,4 @@ const DropDown = props => {
   )
 }
 
-DropDown.propTypes = {
-
-}
-
-export default DropDown
+export default DropDown;

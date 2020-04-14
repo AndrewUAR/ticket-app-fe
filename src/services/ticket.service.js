@@ -8,6 +8,7 @@ const config = {
 }
 
 export const addNewTicket = async (ticketData) => {
+  console.log('here2')
   const response = await axios.post(`${API_ENDPOINT}/tickets`, ticketData, config);
   return response;
 }
@@ -22,12 +23,13 @@ export const editTicket = async (id, ticketData) => {
   return response;
 } 
 
-export const deleteTicket = async (id, ticketData) => {
+export const deleteTicket = async (id) => {
   const response = await axios.delete(`${API_ENDPOINT}/tickets/${id}`, config);
   return response;
 }
 
 export const closeTicket = async (id) => {
-  const response = await axios.patch(`${API_ENDPOINT}/tickets/${id}`, config);
+  const response = await axios.patch(`${API_ENDPOINT}/tickets/close/${id}`, config);
+  console.log(response)
   return response;
 }

@@ -6,17 +6,29 @@ import authReducer from './authReducer';
 import errorReducer from './errorReducer';
 import modalReducer from './modalReducer';
 import ticketReducer from './ticketReducer';
+import userReducer from './userReducer';
+
+import { LOGOUT } from '../types';
 
 const persistConfig = {
   key: 'root',
   storage
 };
 
-const rootReducers = combineReducers({
+const appReducers = combineReducers({
   auth: authReducer,
   errors: errorReducer,
   modal: modalReducer,
-  tickets: ticketReducer
+  tickets: ticketReducer,
+  user: userReducer
 });
+
+const rootReducers = (state, action) => {
+  if (action.type === LOGOUT) {
+    state = undefined;
+    localStorage.clear();
+  }
+  return appReducers(state, action);
+}
 
 export default persistReducer(persistConfig, rootReducers);

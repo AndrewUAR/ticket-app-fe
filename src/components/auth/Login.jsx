@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import './Auth.css';
 import FormInput from '../reusable/FormInput';
 import Button from '../reusable/Button';
 import { Link } from 'react-router-dom';
 import { validateInputs } from '../../helpers/Helpers';
+import { loginUser } from '../../redux/action/auth';
 
-const Register = () => {
+const Login = props => {
+  const { loginUser, isAuthenticated, history, errors } = props;
   const [user, setUser] = useState({
     username: '',
     password: ''
@@ -17,14 +21,19 @@ const Register = () => {
   })
 
   const { username, password } = user;
-  const { usernameError, passwordError, roleError } = error;
+  const { usernameError, passwordError } = error;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push('/dashboard')
+    }
+  }, [isAuthenticated, history]);
 
   const onLoginUser = e => {
     e.preventDefault();
     const isValid = validateInputs(user, setError);
-    console.log(isValid)
     if (isValid) {
-      console.log(user)
+      loginUser(user)
     }
   }
 
@@ -72,11 +81,30 @@ const Register = () => {
             Don't have an account? <Link to={"/sign-up"}>Register</Link>
           </p>
         </form>
+        {
+          errors ?
+          <p className="error-feedback">{errors}</p>
+          : ''
+        }
       </div>
     </div>
   )
 }
 
-export default Register
 
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  errors: state.errors
+});
 
+const actions = ({ 
+  loginUser
+})
+
+export default connect(mapStateToProps, actions)(Login);
+
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
+  errors: PropTypes.string
+}

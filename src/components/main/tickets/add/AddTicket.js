@@ -12,7 +12,7 @@ const AddTicket = props => {
     setVisible(add);
   }, [setVisible, add])
 
-  const dismiss = () => {
+  const addTicketModal = () => {
     addModal(false);
   }
 
@@ -21,8 +21,8 @@ const AddTicket = props => {
       <Modal 
         header="Add New Ticket"
         visible={visible}
-        dismiss={dismiss}
-        children={<AddTicketForm />}
+        dismiss={addTicketModal}
+        children={<AddTicketForm addModal={addModal} />}
       />
     </>
   )

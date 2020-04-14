@@ -25,7 +25,7 @@ const FormInput = props => {
         placeholder={placeholder}
         onChange={onChange}
         className={className}
-        autoComplete="false"
+        autoComplete="off"
         style={{ border: error ? 'solid 1px red' : '' }}
       />
       {

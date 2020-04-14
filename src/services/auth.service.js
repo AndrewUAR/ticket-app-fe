@@ -1,11 +1,8 @@
 import axios from 'axios';
+import { apiEndPoint, configHeader } from '../config';
 
-const API_ENDPOINT = 'http://localhost:5000';
-const config = {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-}
+const API_ENDPOINT = apiEndPoint();
+const config = configHeader()
 
 export const signUpUser = async (userData) => {
   const response = await axios.post(`${API_ENDPOINT}/register`, userData, config);

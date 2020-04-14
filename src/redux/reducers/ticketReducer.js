@@ -27,7 +27,7 @@ export default(state = initialState, action) => {
     case UPDATE_TABLE_ENTRIES:
       return {
         ...state,
-        selectedTicket: action.payload
+        entries: action.payload
     };
     case SELECTED_TICKET:
       return {
